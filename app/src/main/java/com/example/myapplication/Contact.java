@@ -1,8 +1,11 @@
 package com.example.myapplication;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Objects;
 
-public class Contact {
+public class Contact implements Parcelable {
     public String name;
     public String email;
     public String mobile;
@@ -12,6 +15,36 @@ public class Contact {
         this.email = email;
         this.mobile = mobile;
     }
+
+    protected Contact(Parcel in) {
+        name = in.readString();
+        email = in.readString();
+        mobile = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeString(email);
+        dest.writeString(mobile);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Contact> CREATOR = new Creator<Contact>() {
+        @Override
+        public Contact createFromParcel(Parcel in) {
+            return new Contact(in);
+        }
+
+        @Override
+        public Contact[] newArray(int size) {
+            return new Contact[size];
+        }
+    };
 
     @Override
     public String toString() {
@@ -31,10 +64,3 @@ public class Contact {
         return Objects.hash(name);
     }
 }
-
-
-
-
-
-
-

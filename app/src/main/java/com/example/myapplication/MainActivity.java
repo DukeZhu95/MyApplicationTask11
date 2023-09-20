@@ -22,21 +22,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        contactListView.setAdapter(adapter);
-        contactListView.setOnItemClickListener(this);
-
         // Setup Adapter
         contactListView = (ListView) findViewById(R.id.contactsListView);
 
         if (contactListView != null) {
             adapter = new ArrayAdapter<Contact>(this, android.R.layout.simple_list_item_1, contacts);
             contactListView.setAdapter(adapter);
+            contactListView.setOnItemClickListener(this);
 
             // Add some Contacts
             contacts.add(new Contact("Duke Zhu", "zlnirvana4@gmail.com", "0224543833"));
             contacts.add(new Contact("Jerry Liang", "574918962@qq.com", "0211234567"));
             contacts.add(new Contact("Alex An", "AnQian$888@yeah.net", "0279031784" ));
         }
+
     }
 
     public void saveContact(View view) {
