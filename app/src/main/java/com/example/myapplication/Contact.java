@@ -2,10 +2,16 @@ package com.example.myapplication;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 import java.util.Objects;
 
+@Entity
 public class Contact implements Parcelable {
+    @PrimaryKey(autoGenerate = true)
+    public long id;
+
     public String name;
     public String email;
     public String mobile;
@@ -17,6 +23,7 @@ public class Contact implements Parcelable {
     }
 
     protected Contact(Parcel in) {
+        id = in.readLong();
         name = in.readString();
         email = in.readString();
         mobile = in.readString();
@@ -24,6 +31,7 @@ public class Contact implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
         dest.writeString(name);
         dest.writeString(email);
         dest.writeString(mobile);

@@ -2,3 +2,6 @@
 plugins {
     id("com.android.application") version "8.1.1" apply false
 }
+
+val roomVersion by extra("1.1.1")
+val archLifecycleVersion by extra("1.1.1")

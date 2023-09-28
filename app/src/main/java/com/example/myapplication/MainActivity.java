@@ -1,5 +1,8 @@
 package com.example.myapplication;
 
+import static android.os.Build.VERSION_CODES.R;
+
+import android.arch.lifecycle.Observer;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -11,11 +14,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.nio.channels.AlreadyBoundException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
     private ArrayList<Contact> contacts = new ArrayList<Contact>();
     private ArrayAdapter<Contact> adapter;
     private ListView contactListView;
+    private ContactRepository contactRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +41,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             contacts.add(new Contact("Alex An", "AnQian$888@yeah.net", "0279031784" ));
         }
 
+        // Create a ContactRepository and register an observer
+        contactRepository = new ContactRepository(this);
+        contactRepository.getAllContacts().observe(this, new Observer<List<Contact>>() {
+            @Override
+            public void onChanged(List<Contact> updatedContacts) {
+                // update the contacts list when the database changes
+                adapter.clear();
+                adapter.addAll(updatedContacts);
+            }
+        });
     }
+
 
     public void saveContact(View view) {
         EditText nameField = (EditText) findViewById(R.id.name);
@@ -53,20 +69,43 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // Check if the contact already exists in the contacts ArrayList
         int existingIndex = contacts.indexOf(newContact);
         if (existingIndex >= 0) {
-            // Update the existing contact
-            contacts.set(existingIndex, newContact);
+            // Update the existing contact in the database
+            Contact existingContact = contacts.get(existingIndex);
+            existingContact.email = email;
+            existingContact.mobile = mobile;
+            contactRepository.update(existingContact);
             String message = "Updated contact for " + name + "\nEmail: " + email + "\nMobile: " + mobile;
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         } else {
-            // Add the new contact
-            contacts.add(newContact);
+            // Insert the new contact into the database
+            contactRepository.insert(newContact);
             String message = "Saved contact for " + name + "\nEmail: " + email + "\nMobile: " + mobile;
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         }
 
-        // Notify the adapter that the data set has changed
-        if (adapter != null) {
-            adapter.notifyDataSetChanged();
+        // No need to notify the adapter here as the LiveData observer will handle it
+    }
+
+    public void deleteContact(View view) {
+        EditText nameField = (EditText) findViewById(R.id.name);
+        String name = nameField.getText().toString();
+
+        // Find the contact in the contacts ArrayList
+        Contact contactToDelete = null;
+        for (Contact contact : contacts) {
+            if (contact.name.equals(name)) {
+                contactToDelete = contact;
+                break;
+            }
+        }
+
+        if (contactToDelete != null) {
+            // Delete the contact from the database
+            contactRepository.delete(contactToDelete);
+            String message = "Deleted contact for " + name;
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Contact not found!", Toast.LENGTH_SHORT).show();
         }
     }
 
