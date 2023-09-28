@@ -1,11 +1,10 @@
 package com.example.myapplication;
 
-import android.arch.lifecycle.LiveData;
+import androidx.lifecycle.LiveData;
+import android.content.Context;
 import android.os.AsyncTask;
 
 import java.util.List;
-
-import javax.naming.Context;
 
 
 public class ContactRepository {

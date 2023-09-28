@@ -2,7 +2,8 @@ package com.example.myapplication;
 
 import static android.os.Build.VERSION_CODES.R;
 
-import android.arch.lifecycle.Observer;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.LiveData;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;

@@ -33,21 +33,23 @@ android {
 
 
 dependencies {
-    //noinspection GradleCompatible
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.9.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.room:room-common:2.5.2")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
-    // Room components
-    implementation("android.arch.persistence.room:runtime:${rootProject.extra["roomVersion"]}")
-    annotationProcessor("android.arch.persistence.room:compiler:${rootProject.extra["roomVersion"]}")
-    androidTestImplementation("android.arch.persistence.room:testing:${rootProject.extra["roomVersion"]}")
+        implementation("androidx.appcompat:appcompat:1.6.1")
+        implementation("com.google.android.material:material:1.8.0")
+        implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+        testImplementation("junit:junit:4.13.2")
+        androidTestImplementation("androidx.test.ext:junit:1.1.5")
+        androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
-    // Lifecycle components
-    implementation("android.arch.lifecycle:extensions:${rootProject.extra["archLifecycleVersion"]}")
-    annotationProcessor("android.arch.lifecycle:compiler:${rootProject.extra["archLifecycleVersion"]}")
+        //task 10
+        // Room components
+        implementation ("androidx.room:room-runtime:2.4.0")
+        annotationProcessor ("androidx.room:room-compiler:2.4.0")
+        androidTestImplementation ("androidx.room:room-testing:2.4.0")
+
+        // Lifecycle components
+        implementation ("androidx.lifecycle:lifecycle-viewmodel:2.4.0")
+        implementation ("androidx.lifecycle:lifecycle-runtime:2.4.0")
+        annotationProcessor ("androidx.lifecycle:lifecycle-compiler:2.4.0")
+
 }
