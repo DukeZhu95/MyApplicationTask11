@@ -1,10 +1,9 @@
 package com.example.myapplication;
 
-import static android.os.Build.VERSION_CODES.R;
-
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.LiveData;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -13,12 +12,12 @@ import android.widget.ListView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.nio.channels.AlreadyBoundException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
     private ArrayList<Contact> contacts = new ArrayList<Contact>();
+    private ArrayList<Contact> filteredContacts = new ArrayList<Contact>();
     private ArrayAdapter<Contact> adapter;
     private ListView contactListView;
     private ContactRepository contactRepository;
@@ -26,13 +25,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ContactRoomDatabase.getDatabase(this);
         setContentView(R.layout.activity_main);
 
         // Setup Adapter
         contactListView = (ListView) findViewById(R.id.contactsListView);
+        EditText searchBar = findViewById(R.id.searchBar);  // Assuming you have added the EditText in your XML
 
         if (contactListView != null) {
-            adapter = new ArrayAdapter<Contact>(this, android.R.layout.simple_list_item_1, contacts);
+            adapter = new ArrayAdapter<Contact>(this, android.R.layout.simple_list_item_1, filteredContacts);
             contactListView.setAdapter(adapter);
             contactListView.setOnItemClickListener(this);
 
@@ -40,6 +41,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             contacts.add(new Contact("Duke Zhu", "zlnirvana4@gmail.com", "0224543833"));
             contacts.add(new Contact("Jerry Liang", "574918962@qq.com", "0211234567"));
             contacts.add(new Contact("Alex An", "AnQian$888@yeah.net", "0279031784" ));
+            filteredContacts.addAll(contacts);  // Initially, show all contacts
+
+            // Add TextWatcher for the search bar
+            searchBar.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    // Do nothing
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    filterContacts(s.toString());
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    // Do nothing
+                }
+            });
         }
 
         // Create a ContactRepository and register an observer
@@ -48,12 +68,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onChanged(List<Contact> updatedContacts) {
                 // update the contacts list when the database changes
-                adapter.clear();
-                adapter.addAll(updatedContacts);
+                contacts.clear();
+                contacts.addAll(updatedContacts);
+                filterContacts(searchBar.getText().toString());  // Update the filtered list based on the current search query
             }
         });
     }
 
+    private void filterContacts(String query) {
+        filteredContacts.clear();
+        for (Contact contact : contacts) {
+            if (contact.name.toLowerCase().contains(query.toLowerCase())) {
+                filteredContacts.add(contact);
+            }
+        }
+        adapter.notifyDataSetChanged();  // Notify the adapter that the data set has changed
+    }
 
     public void saveContact(View view) {
         EditText nameField = (EditText) findViewById(R.id.name);
@@ -83,8 +113,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             String message = "Saved contact for " + name + "\nEmail: " + email + "\nMobile: " + mobile;
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         }
-
-        // No need to notify the adapter here as the LiveData observer will handle it
     }
 
     public void deleteContact(View view) {
@@ -110,7 +138,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Contact contact = (Contact) parent.getAdapter().getItem(position);
@@ -122,7 +149,4 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         Toast.makeText(parent.getContext(), "Clicked " + contact, Toast.LENGTH_SHORT).show();
     }
-
-
 }
-

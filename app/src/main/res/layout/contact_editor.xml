@@ -8,6 +8,7 @@
     android:paddingRight="16dp"
     android:paddingTop="16dp"
     tools:context=".MainActivity">
+
     <TextView
         android:id="@+id/page_title"
         android:layout_width="match_parent"
@@ -19,6 +20,7 @@
         android:gravity="center_horizontal"
         android:text="Edit Contact"
         android:textAppearance="?android:attr/textAppearanceLarge" />
+
     <EditText
         android:id="@+id/name"
         android:layout_width="wrap_content"
@@ -29,6 +31,7 @@
         android:ems="10"
         android:hint="Firstname Lastname"
         android:inputType="textPersonName" />
+
     <ImageView
         android:id="@+id/email_icon"
         android:layout_width="wrap_content"
@@ -38,6 +41,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="20dp"
         android:src="@android:drawable/sym_action_email" />
+
     <EditText
         android:id="@+id/email"
         android:layout_width="wrap_content"
@@ -51,6 +55,7 @@
         android:inputType="textEmailAddress">
         <requestFocus />
     </EditText>
+
     <ImageView
         android:id="@+id/phone_icon"
         android:layout_width="wrap_content"
@@ -59,6 +64,7 @@
         android:layout_alignLeft="@+id/email_icon"
         android:layout_marginTop="20dp"
         android:src="@android:drawable/sym_action_call" />
+
     <EditText
         android:id="@+id/mobile"
         android:layout_width="wrap_content"
@@ -69,19 +75,29 @@
         android:ems="10"
         android:hint="Mobile number"
         android:inputType="phone" />
-    <Button
-        android:id="@+id/btnSubmit"
-        android:layout_width="wrap_content"
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:onClick="saveContact"
-        android:text="Save contact" />
-    <Button
-        android:id="@+id/btnDelete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="deleteContact"
-        android:text="Delete Contact" />
+        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+        android:paddingTop="16dp">
 
+        <Button
+            android:id="@+id/btnSubmit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="saveContact"
+            android:text="Save Contact" />
+
+        <Button
+            android:id="@+id/btnDelete"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="deleteContact"
+            android:text="Delete Contact" />
+    </LinearLayout>
 </RelativeLayout>
