@@ -64,10 +64,9 @@ public class Contact implements Parcelable {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         Contact contact = (Contact) obj;
-        return Objects.equals(name, contact.name) &&
-                Objects.equals(email, contact.email) &&
-                Objects.equals(mobile, contact.mobile);
+        return Objects.equals(name, contact.name);
     }
+
 
     @Override
     public int hashCode() {

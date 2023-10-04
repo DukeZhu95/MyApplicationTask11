@@ -1,9 +1,12 @@
 package com.example.myapplication;
 
 import androidx.lifecycle.Observer;
+
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -52,14 +55,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    filterContacts(s.toString());
+                    int orientation = getResources().getConfiguration().orientation;
+                    if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                        // In landscape mode, filter the contacts based on the search query
+                        filterContacts(s.toString());
+                    } else {
+                        // In portrait mode, assume the user is trying to edit or add a contact
+                        // (keep your existing logic for editing/adding contacts here)
+                    }
                 }
+
 
                 @Override
                 public void afterTextChanged(Editable s) {
                     // Do nothing
                 }
             });
+
         }
 
         // Create a ContactRepository and register an observer
@@ -67,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         contactRepository.getAllContacts().observe(this, new Observer<List<Contact>>() {
             @Override
             public void onChanged(List<Contact> updatedContacts) {
+                Log.d("MainActivity", "Contacts updated: " + updatedContacts.toString());
                 // update the contacts list when the database changes
                 contacts.clear();
                 contacts.addAll(updatedContacts);
@@ -76,14 +89,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void filterContacts(String query) {
+        Toast.makeText(this, "Filtering with query: " + query, Toast.LENGTH_SHORT).show();
         filteredContacts.clear();
         for (Contact contact : contacts) {
             if (contact.name.toLowerCase().contains(query.toLowerCase())) {
                 filteredContacts.add(contact);
             }
         }
-        adapter.notifyDataSetChanged();  // Notify the adapter that the data set has changed
+        adapter.notifyDataSetChanged();
+        Toast.makeText(this, "Filtered contacts: " + filteredContacts.toString(), Toast.LENGTH_SHORT).show();
     }
+
 
     public void saveContact(View view) {
         EditText nameField = (EditText) findViewById(R.id.name);
@@ -141,12 +157,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Contact contact = (Contact) parent.getAdapter().getItem(position);
+        int orientation = getResources().getConfiguration().orientation;
 
-        // Fill the edit contact form with the contact details
-        ((EditText) findViewById(R.id.name)).setText(contact.name);
-        ((EditText) findViewById(R.id.email)).setText(contact.email);
-        ((EditText) findViewById(R.id.mobile)).setText(contact.mobile);
-
-        Toast.makeText(parent.getContext(), "Clicked " + contact, Toast.LENGTH_SHORT).show();
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // In landscape mode, just show a Toast message
+            Toast.makeText(parent.getContext(), "Selected " + contact, Toast.LENGTH_SHORT).show();
+        } else {
+            // In portrait mode, fill the edit contact form with the contact details
+            ((EditText) findViewById(R.id.name)).setText(contact.name);
+            ((EditText) findViewById(R.id.email)).setText(contact.email);
+            ((EditText) findViewById(R.id.mobile)).setText(contact.mobile);
+            Toast.makeText(parent.getContext(), "Clicked " + contact, Toast.LENGTH_SHORT).show();
+        }
     }
+
 }
