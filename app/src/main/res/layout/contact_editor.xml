@@ -89,6 +89,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_marginBottom="40dp"
             android:onClick="saveContact"
             android:text="Save Contact" />
 
@@ -97,6 +98,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_marginBottom="40dp"
             android:onClick="deleteContact"
             android:text="Delete Contact" />
     </LinearLayout>
