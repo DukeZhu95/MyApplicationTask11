@@ -1,5 +1,7 @@
 package com.example.myapplication;
 
+import androidx.lifecycle.Observer;
+
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.Editable;
@@ -10,9 +12,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         contactRepository.getAllContacts().observe(this, new Observer<List<Contact>>() {
             @Override
             public void onChanged(List<Contact> updatedContacts) {
-//                Log.d("MainActivity", "Contacts updated: " + updatedContacts.toString());
+                Log.d("MainActivity", "Contacts updated: " + updatedContacts.toString());
                 // update the contacts list when the database changes
                 contacts.clear();
                 contacts.addAll(updatedContacts);
@@ -87,8 +88,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
     }
 
+
+
     private void filterContacts(String query) {
-//        Toast.makeText(this, "Filtering with query: " + query, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Filtering with query: " + query, Toast.LENGTH_SHORT).show();
         filteredContacts.clear();
         for (Contact contact : contacts) {
             if (contact.name.toLowerCase().contains(query.toLowerCase())) {
@@ -96,12 +99,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         }
         adapter.notifyDataSetChanged();
-//        Toast.makeText(this, "Filtered contacts: " + filteredContacts.toString(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Filtered contacts: " + filteredContacts.toString(), Toast.LENGTH_SHORT).show();
     }
 
 
     public void saveContact(View view) {
-        Log.d("MainActivity", "saveContact called");
         EditText nameField = (EditText) findViewById(R.id.name);
         EditText emailField = (EditText) findViewById(R.id.email);
         EditText mobileField = (EditText) findViewById(R.id.mobile);
@@ -122,17 +124,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             existingContact.mobile = mobile;
             contactRepository.update(existingContact);
             String message = "Updated contact for " + name + "\nEmail: " + email + "\nMobile: " + mobile;
-//            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         } else {
             // Insert the new contact into the database
             contactRepository.insert(newContact);
             String message = "Saved contact for " + name + "\nEmail: " + email + "\nMobile: " + mobile;
-//            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         }
     }
 
     public void deleteContact(View view) {
-        Log.d("MainActivity", "deleteContact called");
         EditText nameField = (EditText) findViewById(R.id.name);
         String name = nameField.getText().toString();
 
@@ -149,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             // Delete the contact from the database
             contactRepository.delete(contactToDelete);
             String message = "Deleted contact for " + name;
-//            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         } else {
 //            Toast.makeText(this, "Contact not found!", Toast.LENGTH_SHORT).show();
         }
@@ -183,4 +184,36 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
+    public void updateContactDetail(Contact editedContact) {
+        if (editedContact != null) {
+            // 更新联系人列表
+            int index = -1;
+            for (int i = 0; i < contacts.size(); i++) {
+                if (contacts.get(i).name.equals(editedContact.name)) {
+                    index = i;
+                    break;
+                }
+            }
+
+            if (index != -1) {
+                // 更新联系人信息
+                contacts.set(index, editedContact);
+                filterContacts(((EditText) findViewById(R.id.searchBar)).getText().toString());
+            } else {
+                // 添加新联系人
+                contacts.add(editedContact);
+                filterContacts(((EditText) findViewById(R.id.searchBar)).getText().toString());
+            }
+
+            // 更新编辑联系人表单的内容
+            ((EditText) findViewById(R.id.name)).setText(editedContact.name);
+            ((EditText) findViewById(R.id.email)).setText(editedContact.email);
+            ((EditText) findViewById(R.id.mobile)).setText(editedContact.mobile);
+        } else {
+            // 清空编辑联系人表单的内容
+            ((EditText) findViewById(R.id.name)).setText("");
+            ((EditText) findViewById(R.id.email)).setText("");
+            ((EditText) findViewById(R.id.mobile)).setText("");
+        }
+    }
 }
