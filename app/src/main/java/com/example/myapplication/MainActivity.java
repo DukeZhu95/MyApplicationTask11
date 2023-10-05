@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             // Add some Contacts
             contacts.add(new Contact("Duke Zhu", "zlnirvana4@gmail.com", "0224543833"));
-            contacts.add(new Contact("Jerry Liang", "574918962@qq.com", "0211234567"));
+            contacts.add(new Contact("Jerry Ling", "574918962@qq.com", "0211234567"));
             contacts.add(new Contact("Alex An", "AnQian$888@yeah.net", "0279031784" ));
             filteredContacts.addAll(contacts);  // Initially, show all contacts
 
@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
     public void saveContact(View view) {
+        Log.d("MainActivity", "saveContact called");
         EditText nameField = (EditText) findViewById(R.id.name);
         EditText emailField = (EditText) findViewById(R.id.email);
         EditText mobileField = (EditText) findViewById(R.id.mobile);
@@ -131,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     public void deleteContact(View view) {
+        Log.d("MainActivity", "deleteContact called");
         EditText nameField = (EditText) findViewById(R.id.name);
         String name = nameField.getText().toString();
 
